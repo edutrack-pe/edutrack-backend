@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from app.models import Alerta, Aula, ConfigRiesgo, Estudiante, Pauta, Prediccion, Riesgo
 from app.services import ml_client
 from app.services.features import construir_features
-from app.services.pautas import generar_pautas
+from app.services.pautas import FACTOR_LEGIBLE, generar_pautas
 
 
 def obtener_config(session: Session) -> ConfigRiesgo:
@@ -52,7 +52,8 @@ def predecir_aula(session: Session, aula: Aula, bimestre: int) -> dict:
             session.add(Alerta(
                 estudiante_id=est.id, tutor_id=aula.tutor_id,
                 mensaje=f"{est.nombres} {est.apellidos} ({aula.nombre}) está en RIESGO ALTO "
-                        f"({pred.probabilidad:.0%}). Factores: {', '.join(pred.factores)}.",
+                        f"({pred.probabilidad:.0%}). Factores: "
+                        f"{', '.join(FACTOR_LEGIBLE.get(f, f) for f in pred.factores)}.",
             ))
         resumen[pred.riesgo.value] += 1
 

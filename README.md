@@ -52,6 +52,9 @@ docker compose -f infra/docker-compose.yml exec backend python scripts/seed.py
 | Frontend | http://localhost:5173 |
 | API + Swagger | http://localhost:8000/docs |
 | ML service | http://localhost:8001/docs |
+| MySQL | `localhost:3307` (usuario `edutrack`; cambia el puerto con `MYSQL_HOST_PORT`) |
+
+> La primera vez el contenedor `frontend` tarda 1–2 minutos en instalar dependencias.
 
 ## Usuarios demo (creados por `seed.py`)
 

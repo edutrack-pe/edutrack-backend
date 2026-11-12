@@ -10,12 +10,15 @@ services:
       MYSQL_USER: edutrack
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Define MYSQL_PASSWORD en .env}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Define MYSQL_ROOT_PASSWORD en .env}
-    ports: ["3306:3306"]
+    # Puerto en tu PC (3307 para no chocar con un MySQL local). Cámbialo con MYSQL_HOST_PORT en .env
+    ports: ["${MYSQL_HOST_PORT:-3307}:3306"]
     volumes: [mysql_data:/var/lib/mysql]
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      # Consulta real con el usuario de la app (mysqladmin ping responde antes de terminar la inicialización)
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 -uedutrack -p\"$$MYSQL_PASSWORD\" -e 'SELECT 1' edutrack"]
       interval: 5s
-      retries: 20
+      start_period: 20s
+      retries: 30
 
   ml-service:
     build: ../../edutrack-ml/ml-service
@@ -30,6 +33,7 @@ services:
       CORS_ORIGINS: http://localhost:5173
     ports: ["8000:8000"]
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
     volumes: [../app:/app/app, ../scripts:/app/scripts]
     depends_on:
       mysql: { condition: service_healthy }

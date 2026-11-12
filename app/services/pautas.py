@@ -47,7 +47,20 @@ PAUTAS: dict[str, list[str]] = {
     ],
 }
 
-GENERICA = "Mantenga comunicación constante con el tutor y revise el avance de su hijo(a) cada semana."
+FACTOR_LEGIBLE: dict[str, str] = {
+    "promedio": "promedio bajo",
+    "inasistencias": "inasistencias",
+    "conducta": "conducta",
+    "horas_estudio": "pocas horas de estudio",
+    "nivel_edu_padres": "nivel educativo de los padres",
+    "acceso_tecnologia": "acceso a tecnología",
+    "tiempo_disponible_padres": "poco tiempo de acompañamiento",
+    "comunicacion_familiar": "comunicación familiar",
+    "cursos_desaprobados": "cursos desaprobados",
+    "tareas_entregadas_pct": "tareas no entregadas",
+}
+
+GENERICA ="Mantenga comunicación constante con el tutor y revise el avance de su hijo(a) cada semana."
 
 
 def generar_pautas(factores: list[str], riesgo: str) -> list[tuple[str, str]]:
