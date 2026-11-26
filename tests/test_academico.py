@@ -32,25 +32,44 @@ def test_asistencia(client, login):
     assert any(a["fecha"] == "2026-11-10" and not a["presente"] for a in lista)
 
 
+def test_solo_el_docente_registra_notas(client, login):
+    director = login("director@edutrack.pe")
+    est = client.get("/api/estudiantes", headers=director).json()[0]
+    curso_id = client.get(f"/api/estudiantes/{est['id']}", headers=director).json()["notas"][0]["curso_id"]
+    nota = {"estudiante_id": est["id"], "curso_id": curso_id, "bimestre": 2, "valor": 15}
+    csv = ("notas.csv", b"codigo_estudiante,curso,bimestre,nota\nA0001,Matem\xc3\xa1tica,2,13\n", "text/csv")
+
+    for correo in ("director@edutrack.pe", "analista@edutrack.pe", "tutor1@edutrack.pe", "padre@edutrack.pe"):
+        cabeceras = login(correo)
+        assert client.post("/api/notas", headers=cabeceras, json=nota).status_code == 403, correo
+        assert client.post("/api/ingesta/csv?tipo=notas", headers=cabeceras, files={"archivo": csv}).status_code == 403, correo
+        # Cada rol sigue consultando las notas de los estudiantes que le corresponden.
+        propio = client.get("/api/estudiantes", headers=cabeceras).json()[0]
+        notas = client.get(f"/api/notas?estudiante_id={propio['id']}", headers=cabeceras)
+        assert notas.status_code == 200 and notas.json(), correo
+
+
 def test_ingesta_csv(client, login):
-    analista = login("analista@edutrack.pe")
+    docente1 = login("docente1@edutrack.pe")  # dicta Matemática y Ciencia
     plantilla = client.get("/api/ingesta/plantilla?tipo=notas").text
     assert plantilla.startswith("codigo_estudiante,curso,bimestre,nota")
 
-    csv = "codigo_estudiante,curso,bimestre,nota\nA0001,Matemática,2,13\nA9999,Matemática,2,10\nA0001,Arte,2,12\nA0001,Inglés,9,12\n"
-    r = client.post("/api/ingesta/csv?tipo=notas", headers=analista,
+    csv = ("codigo_estudiante,curso,bimestre,nota\nA0001,Matemática,2,13\nA9999,Matemática,2,10\n"
+           "A0001,Arte,2,12\nA0001,Matemática,9,12\nA0001,Comunicación,2,14\n")
+    r = client.post("/api/ingesta/csv?tipo=notas", headers=docente1,
                     files={"archivo": ("notas.csv", csv.encode(), "text/csv")})
     assert r.status_code == 200, r.text
     body = r.json()
     assert body["insertados"] == 1
-    assert len(body["errores"]) == 3
+    assert len(body["errores"]) == 4
+    assert body["errores"][-1] == "Fila 6: no dictas el curso 'Comunicación' en el aula del estudiante"
 
     asis = "codigo_estudiante,fecha,presente\nA0001,2026-11-11,0\nA0002,2026-11-11,si\n"
-    r = client.post("/api/ingesta/csv?tipo=asistencias", headers=analista,
+    r = client.post("/api/ingesta/csv?tipo=asistencias", headers=docente1,
                     files={"archivo": ("asis.csv", asis.encode(), "text/csv")})
     assert r.json()["insertados"] == 2
 
-    mala = client.post("/api/ingesta/csv?tipo=notas", headers=analista,
+    mala = client.post("/api/ingesta/csv?tipo=notas", headers=docente1,
                        files={"archivo": ("x.csv", b"col1,col2\n1,2\n", "text/csv")})
     assert mala.status_code == 400
 

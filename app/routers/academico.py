@@ -13,7 +13,9 @@ from app.services.ingesta import PLANTILLAS, importar, leer_archivo
 
 router = APIRouter(tags=["académico"])
 
-PUEDEN_REGISTRAR = (Rol.docente, Rol.director, Rol.analista)
+# Solo el docente registra notas (de sus cursos); director, analista, tutor y apoderado las consultan.
+PUEDEN_REGISTRAR_NOTAS = (Rol.docente,)
+PUEDEN_REGISTRAR_ASISTENCIA = (Rol.docente, Rol.director, Rol.analista, Rol.tutor)
 
 
 @router.get("/notas", response_model=list[NotaOut])
@@ -25,14 +27,14 @@ def listar_notas(estudiante_id: int, user: User = Depends(get_current_user), ses
 @router.post("/notas", response_model=NotaOut, status_code=201, summary="RF-02 · Registrar nota")
 def registrar_nota(
     data: NotaIn,
-    user: User = Depends(require_role(*PUEDEN_REGISTRAR)),
+    user: User = Depends(require_role(*PUEDEN_REGISTRAR_NOTAS)),
     session: Session = Depends(get_session),
 ):
-    est = obtener_estudiante(session, user, data.estudiante_id)
+    est =obtener_estudiante(session, user, data.estudiante_id)
     curso = session.get(Curso, data.curso_id)
     if not curso or curso.aula_id != est.aula_id:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "El curso no pertenece al aula del estudiante")
-    if user.rol == Rol.docente and curso.docente_id != user.id:
+    if curso.docente_id != user.id:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Solo puedes registrar notas de tus cursos")
     nota = Nota(**data.model_dump())
     session.add(nota)
@@ -52,7 +54,7 @@ def listar_asistencias(estudiante_id: int, user: User = Depends(get_current_user
 @router.post("/asistencias", response_model=AsistenciaOut, status_code=201)
 def registrar_asistencia(
     data: AsistenciaIn,
-    user: User = Depends(require_role(*PUEDEN_REGISTRAR, Rol.tutor)),
+    user: User = Depends(require_role(*PUEDEN_REGISTRAR_ASISTENCIA)),
     session: Session = Depends(get_session),
 ):
     obtener_estudiante(session, user, data.estudiante_id)
@@ -76,11 +78,11 @@ def plantilla(tipo: str = Query("notas", pattern="^(notas|asistencias)$")):
 async def ingesta(
     tipo: str = Query("notas", pattern="^(notas|asistencias)$"),
     archivo: UploadFile = File(...),
-    _: User = Depends(require_role(Rol.docente, Rol.analista, Rol.director)),
+    user: User = Depends(require_role(*PUEDEN_REGISTRAR_NOTAS)),
     session: Session = Depends(get_session),
 ):
     df = leer_archivo(archivo.filename or "", await archivo.read())
-    return importar(session, tipo, df)
+    return importar(session, tipo, df, docente_id=user.id)
 
 
 @router.post("/encuestas", status_code=201, summary="Encuesta sociofamiliar (apoderado)")

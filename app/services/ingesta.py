@@ -23,7 +23,8 @@ def leer_archivo(nombre: str, contenido: bytes) -> pd.DataFrame:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, f"No se pudo leer el archivo: {e}") from e
 
 
-def importar(session: Session, tipo: str, df: pd.DataFrame) -> dict:
+def importar(session: Session, tipo: str, df: pd.DataFrame, docente_id: int | None = None) -> dict:
+    """Importa el archivo. Con `docente_id`, las notas solo se aceptan para los cursos que dicta ese docente."""
     columnas = PLANTILLAS[tipo]
     df.columns = [str(c).strip().lower() for c in df.columns]
     faltantes = [c for c in columnas if c not in df.columns]
@@ -49,6 +50,9 @@ def importar(session: Session, tipo: str, df: pd.DataFrame) -> dict:
                 ).first()
                 if not curso:
                     errores.append(f"Fila {n}: curso '{fila['curso']}' no existe en el aula del estudiante")
+                    continue
+                if docente_id is not None and curso.docente_id != docente_id:
+                    errores.append(f"Fila {n}: no dictas el curso '{curso.nombre}' en el aula del estudiante")
                     continue
                 valor, bimestre = float(fila["nota"]), int(fila["bimestre"])
                 if not (0 <= valor <= 20 and 1 <= bimestre <= 4):

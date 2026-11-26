@@ -16,10 +16,10 @@ Todas las rutas usan el prefijo `/api` y requieren `Authorization: Bearer <token
 | GET | `/estudiantes?aula_id=` | todos (filtrado por rol) | RF-02 |
 | POST | `/estudiantes` | director, analista | — |
 | GET | `/estudiantes/{id}` (ficha completa + predicción + pautas) | con acceso al estudiante | RF-02, RF-07 |
-| GET/POST | `/notas` | POST: docente (sus cursos), director, analista | RF-02 |
+| GET/POST | `/notas` | GET: según acceso a la ficha · POST: solo docente (sus cursos) | RF-02 |
 | GET/POST | `/asistencias` | POST: docente, tutor, director, analista | RF-02 |
 | GET | `/ingesta/plantilla?tipo=notas\|asistencias` | público | RF-03 |
-| POST | `/ingesta/csv?tipo=notas\|asistencias` (multipart `archivo`) | docente, analista, director | RF-03 |
+| POST | `/ingesta/csv?tipo=notas\|asistencias` (multipart `archivo`) | solo docente (notas de sus cursos) | RF-03 |
 | POST | `/encuestas` | padre (su hijo), tutor, analista | — |
 | POST | `/predicciones/aula/{id}?bimestre=1` | analista, director, tutor (su aula) | RF-04 |
 | GET | `/predicciones/estudiante/{id}` | con acceso al estudiante | RF-04 |
