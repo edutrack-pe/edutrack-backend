@@ -26,7 +26,9 @@ USUARIOS = [
     ("docente1@edutrack.pe", "Docente de Ciencias", Rol.docente),
     ("docente2@edutrack.pe", "Docente de Letras", Rol.docente),
     ("padre@edutrack.pe", "Apoderado Demo", Rol.padre),
+    ("padre2@edutrack.pe", "Apoderada Demo 2", Rol.padre),
 ]
+# Apoderados demo: padre@ tiene al primer estudiante de 3° A; padre2@ al primero de 4° A.
 
 
 def poblar(session: Session, password: str, alumnos_por_aula: int = 30, seed: int = 7) -> dict:
@@ -45,13 +47,16 @@ def poblar(session: Session, password: str, alumnos_por_aula: int = 30, seed: in
     session.add(ConfigRiesgo(id=1))
     session.flush()
 
-    aulas_def = [("3° A", 3, "tutor1@edutrack.pe"), ("3° B", 3, "tutor2@edutrack.pe"), ("4° A", 4, "tutor3@edutrack.pe")]
+    aulas_def = [("3° A", 3, "A", "tutor1@edutrack.pe"), ("3° B", 3, "B", "tutor2@edutrack.pe"),
+                 ("4° A", 4, "A", "tutor3@edutrack.pe")]
     hoy = date.today()
     inicio_bimestre = hoy - timedelta(days=40)
     contador = 0
 
-    for nombre_aula, grado, tutor in aulas_def:
-        aula = Aula(nombre=nombre_aula, grado=grado, colegio_id=colegio.id, tutor_id=usuarios[tutor].id)
+    apoderados = {1: "padre@edutrack.pe", 2 * alumnos_por_aula + 1: "padre2@edutrack.pe"}
+    for nombre_aula, grado, seccion, tutor in aulas_def:
+        aula = Aula(nombre=nombre_aula, grado=grado, seccion=seccion, colegio_id=colegio.id,
+                    tutor_id=usuarios[tutor].id)
         session.add(aula)
         session.flush()
         cursos = []
@@ -73,7 +78,7 @@ def poblar(session: Session, password: str, alumnos_por_aula: int = 30, seed: in
             est = Estudiante(
                 codigo=f"A{contador:04d}", nombres=rng.choice(NOMBRES),
                 apellidos=f"{rng.choice(APELLIDOS)} {rng.choice(APELLIDOS)}", aula_id=aula.id,
-                apoderado_id=usuarios["padre@edutrack.pe"].id if contador == 1 else None,
+                apoderado_id=usuarios[apoderados[contador]].id if contador in apoderados else None,
             )
             session.add(est)
             session.flush()

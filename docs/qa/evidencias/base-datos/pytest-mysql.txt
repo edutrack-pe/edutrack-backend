@@ -1,0 +1,2 @@
+﻿pytest sobre MySQL 8.4.13 (TEST_DATABASE_URL=mysql+pymysql://edutrack:***@127.0.0.1:3318/edutrack_test, TLS con la CA del servidor)
+71 passed, 6 warnings in 292.67s (0:04:52)
