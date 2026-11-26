@@ -1,0 +1,74 @@
+{
+  "inicio": "2026-11-26T22:35:53.080Z",
+  "duracion_ms": 37964.672999999995,
+  "esperados": 8,
+  "inesperados": 0,
+  "omitidos": 0,
+  "pruebas": [
+    {
+      "titulo": "Escenario 1 · HU01: autenticación, sesión y control de acceso",
+      "estado": "passed",
+      "duracion_ms": 4728,
+      "anotaciones": [
+        "serial: "
+      ]
+    },
+    {
+      "titulo": "Escenario 2 · HU02: registrar, editar y persistir un estudiante",
+      "estado": "passed",
+      "duracion_ms": 7825,
+      "anotaciones": [
+        "serial: "
+      ]
+    },
+    {
+      "titulo": "Escenario 4a · HU04: sin notas del bimestre no se predice",
+      "estado": "passed",
+      "duracion_ms": 440,
+      "anotaciones": [
+        "serial: "
+      ]
+    },
+    {
+      "titulo": "Escenario 3 · HU03: carga transaccional de notas (CSV)",
+      "estado": "passed",
+      "duracion_ms": 3544,
+      "anotaciones": [
+        "serial: "
+      ]
+    },
+    {
+      "titulo": "Escenario 4b · HU04: predicción con el Random Forest real",
+      "estado": "passed",
+      "duracion_ms": 5000,
+      "anotaciones": [
+        "serial: ",
+        "prediccion-estudiante-nuevo: riesgo=amarillo probabilidad=0.6561 factores=promedio|cursos_desaprobados"
+      ]
+    },
+    {
+      "titulo": "Escenario 5 · HU05: dashboard consistente con filtros",
+      "estado": "passed",
+      "duracion_ms": 4981,
+      "anotaciones": [
+        "serial: "
+      ]
+    },
+    {
+      "titulo": "Escenario 6 · HU06: alertas al tutor del aula, sin fugas a otros tutores",
+      "estado": "passed",
+      "duracion_ms": 3573,
+      "anotaciones": [
+        "serial: "
+      ]
+    },
+    {
+      "titulo": "Escenario 7 · HU07: portal familiar con recomendaciones y aislamiento",
+      "estado": "passed",
+      "duracion_ms": 3039,
+      "anotaciones": [
+        "serial: "
+      ]
+    }
+  ]
+}

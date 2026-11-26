@@ -26,17 +26,19 @@
 | Seguridad | JWT, RBAC, sin dependencias vulnerables | 0 vulnerabilidades Python; 9 npm residuales (2 críticas solo de desarrollo) | ⚠️ ver `SECURITY_REPORT.md` |
 | Cobertura | > 70 % | BE 95 %, FE 99,81 %, ML 86 % | ✅ |
 | E2E integral | Flujo completo sin mocks | 8/8 escenarios | ✅ |
-| Migraciones | Esquema versionado | Alembic `0001`, verificado contra los modelos | ✅ |
+| Migraciones | Esquema versionado | Alembic `0001`, verificado contra los modelos en SQLite y en **MySQL 8.4** | ✅ |
+| Base de datos MySQL | Persistencia real | Suite del backend y E2E integral 8/8 sobre MySQL 8.4 local; TLSv1.3 hacia la base | ✅ local (ver `DATABASE_REPORT.md`) |
+| Cifrado en reposo | Datos cifrados | Desactivado en la verificación local; RDS sin evidencia | ⚠️ O‑08 |
 | Swagger | `/docs` disponible | Sí | ✅ |
 | Despliegue AWS EC2/RDS | Operativo | **Sin evidencia**; existen `infra/` y `deploy.yml`, no verificados | ⚠️ no declarado |
 
 ## 3. Defectos
-12 corregidos (D‑01…D‑12) y 7 abiertos (O‑01…O‑07). Detalle en `DEFECT_REPORT.md`.
+13 corregidos (D‑01…D‑13) y 8 abiertos (O‑01…O‑08). Detalle en `DEFECT_REPORT.md`.
 
 ## 4. Limitaciones de esta auditoría
 - El informe TB4 se contrastó a partir de **extractos** (historias, criterios, RNF, DoD), no del documento completo.
 - Todos los datos son sintéticos; no se usaron datos personales reales.
-- El rendimiento se midió en un solo equipo con SQLite.
+- El rendimiento se midió en un solo equipo con SQLite. La persistencia se verificó además en MySQL 8.4 local, no en RDS.
 - No se tuvo acceso a la cuenta AWS; no se afirma que EC2/RDS estén configurados.
 - Decisión del equipo: solo el **Docente** carga notas (el TB4 menciona al Analista) — O‑06.
 

@@ -4,7 +4,7 @@ DoD del TB4 (Tabla 42, criterio 1): cobertura de pruebas unitarias **superior al
 
 | Repositorio | Herramienta | Líneas | Ramas | Umbral en CI | Resultado |
 |---|---|---|---|---|---|
-| edutrack-backend | pytest-cov | **95 %** (1 123 sentencias, 52 sin cubrir) | — | `--cov-fail-under=70` | ✅ |
+| edutrack-backend | pytest-cov | **95 %** (1 130 sentencias, 52 sin cubrir) | — | `--cov-fail-under=70` | ✅ |
 | edutrack-frontend | Vitest + V8 | **99,81 %** | **93,93 %** (funciones 96,48 %) | 80 % líneas/ramas/funciones | ✅ |
 | edutrack-ml | pytest-cov | **86 %** (229 sentencias, 33 sin cubrir) | — | `--cov-fail-under=70` (nuevo) | ✅ |
 

@@ -25,7 +25,8 @@ flowchart LR
 | Autenticación | JWT HS256, 8 h, rol en el *claim*; bcrypt | TB4 HU01 |
 | Autorización | `require_role` por endpoint + filtros por aula/hijo en `services/acceso.py` | Evitar fugas entre aulas y familias |
 | Carga masiva | Validar todo el archivo y luego insertar en una sola transacción | HU03: «no se inserta ningún registro» si hay error |
-| Integridad | Restricciones únicas (nota por estudiante/curso/bimestre, asistencia por fecha, alerta por estudiante/periodo) con migración Alembic | Duplicados D‑03, D‑06 |
+| Integridad | Restricciones únicas en la base (nota por estudiante/curso/bimestre, asistencia por fecha, conducta por bimestre, código de estudiante, correo) con migración Alembic; las alertas se deduplican en el servicio (una alerta sin leer por estudiante) | Duplicados D‑03, D‑06 |
+| Base de datos | MySQL 8 verificado localmente (migración, suite completa y E2E); TLS hacia MySQL con `DATABASE_SSL_CA` | `docs/qa/DATABASE_REPORT.md`, D‑13 |
 | Modelo | `Pipeline(SimpleImputer → SMOTE → RandomForest)`; SMOTE solo dentro de los *folds*; VIF > 5 descarta variables | Evitar fuga de datos |
 | Explicación | Oclusión por estudiante contra el perfil mediano sin riesgo, en lote | Factores individuales (D‑04) y rendimiento (D‑09) |
 | Versionado del modelo | `rf-AAAAMMDD-hash` guardado en cada predicción | Trazabilidad HU04 |

@@ -42,4 +42,5 @@ Rutas relativas a cada repositorio (rama `feature/mvp-tb4`). **BE** = edutrack-b
 | DoD | Cobertura > 70 % | CI de los tres repos | Ver `COVERAGE_REPORT.md` | ✅ 95 % / 99,8 % / 86 % |
 | DoD | p95 ≤ 2 s | — | `tests/performance/locustfile.py` · `PERFORMANCE_REPORT.md` | ✅ (entorno local) |
 | DoD | Documentación Swagger | FastAPI `/docs` | Verificación manual de `/docs` | ✅ |
+| DoD | Persistencia en MySQL 8 y TLS hacia la base | BE `app/db.py`, `alembic/` | Suite BE con `TEST_DATABASE_URL`, `tests/test_db.py`, E2E integral sobre MySQL · `DATABASE_REPORT.md` | ✅ (local) |
 | DoD | Despliegue en AWS EC2/RDS | `infra/`, `deploy.yml` | — | ⚠️ Sin evidencia |

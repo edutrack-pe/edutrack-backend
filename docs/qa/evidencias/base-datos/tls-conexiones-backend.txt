@@ -1,0 +1,9 @@
+﻿+----------+---------+-------------+------------------------+
+| usuario  | tipo    | ssl_version | ssl_cipher             |
++----------+---------+-------------+------------------------+
+| edutrack | SSL/TLS | TLSv1.3     | TLS_AES_256_GCM_SHA384 |
+| edutrack | SSL/TLS | TLSv1.3     | TLS_AES_256_GCM_SHA384 |
+| edutrack | SSL/TLS | TLSv1.3     | TLS_AES_256_GCM_SHA384 |
+| edutrack | SSL/TLS | TLSv1.3     | TLS_AES_256_GCM_SHA384 |
+| edutrack | SSL/TLS | TLSv1.3     | TLS_AES_256_GCM_SHA384 |
++----------+---------+-------------+------------------------+

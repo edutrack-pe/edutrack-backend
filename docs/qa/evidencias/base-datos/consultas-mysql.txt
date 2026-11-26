@@ -1,0 +1,179 @@
+﻿+----------------+
+| seccion        |
++----------------+
+| == 1. Servidor |
++----------------+
++---------+------------------+--------------------+
+| version | charset_servidor | collation          |
++---------+------------------+--------------------+
+| 8.4.13  | utf8mb4          | utf8mb4_0900_ai_ci |
++---------+------------------+--------------------+
++------------+--------------------+
+| charset_bd | collation_bd       |
++------------+--------------------+
+| utf8mb4    | utf8mb4_0900_ai_ci |
++------------+--------------------+
++-------------------+
+| migracion_alembic |
++-------------------+
+| 0001_inicial      |
++-------------------+
++------------------------------------------------------------+
+| seccion                                                    |
++------------------------------------------------------------+
+| == 2. Tablas y filas (despues del seed y del E2E integral) |
++------------------------------------------------------------+
++-----------------------+--------+-------------+
+| tabla                 | ENGINE | filas_aprox |
++-----------------------+--------+-------------+
+| actatutoria           | InnoDB |           0 |
+| alembic_version       | InnoDB |           1 |
+| alerta                | InnoDB |           5 |
+| asistencia            | InnoDB |        1800 |
+| auditlog              | InnoDB |           8 |
+| aula                  | InnoDB |           3 |
+| colegio               | InnoDB |           1 |
+| conducta              | InnoDB |          90 |
+| configriesgo          | InnoDB |           1 |
+| curso                 | InnoDB |          12 |
+| encuestasociofamiliar | InnoDB |          76 |
+| estudiante            | InnoDB |          91 |
+| eventocalendario      | InnoDB |          12 |
+| nota                  | InnoDB |         364 |
+| pauta                 | InnoDB |          58 |
+| prediccion            | InnoDB |          31 |
+| tarea                 | InnoDB |        1080 |
+| user                  | InnoDB |           9 |
++-----------------------+--------+-------------+
++------------+---------------+
+| tabla      | filas_exactas |
++------------+---------------+
+| user       |             9 |
+| estudiante |            91 |
+| nota       |           364 |
+| asistencia |          1800 |
+| prediccion |            31 |
+| alerta     |             5 |
+| auditlog   |             8 |
++------------+---------------+
++----------------------------------------------+
+| seccion                                      |
++----------------------------------------------+
+| == 3. Restricciones unicas y claves foraneas |
++----------------------------------------------+
++-----------------------+-----------------------------------+-------------+
+| tabla                 | restriccion                       | tipo        |
++-----------------------+-----------------------------------+-------------+
+| actatutoria           | actatutoria_ibfk_1                | FOREIGN KEY |
+| actatutoria           | actatutoria_ibfk_2                | FOREIGN KEY |
+| alerta                | alerta_ibfk_1                     | FOREIGN KEY |
+| alerta                | alerta_ibfk_2                     | FOREIGN KEY |
+| alerta                | alerta_ibfk_3                     | FOREIGN KEY |
+| asistencia            | asistencia_ibfk_1                 | FOREIGN KEY |
+| asistencia            | uq_asistencia_estudiante_fecha    | UNIQUE      |
+| auditlog              | auditlog_ibfk_1                   | FOREIGN KEY |
+| aula                  | aula_ibfk_1                       | FOREIGN KEY |
+| aula                  | aula_ibfk_2                       | FOREIGN KEY |
+| conducta              | conducta_ibfk_1                   | FOREIGN KEY |
+| conducta              | uq_conducta_estudiante_bimestre   | UNIQUE      |
+| curso                 | curso_ibfk_1                      | FOREIGN KEY |
+| curso                 | curso_ibfk_2                      | FOREIGN KEY |
+| encuestasociofamiliar | encuestasociofamiliar_ibfk_1      | FOREIGN KEY |
+| estudiante            | estudiante_ibfk_1                 | FOREIGN KEY |
+| estudiante            | estudiante_ibfk_2                 | FOREIGN KEY |
+| estudiante            | ix_estudiante_codigo              | UNIQUE      |
+| eventocalendario      | eventocalendario_ibfk_1           | FOREIGN KEY |
+| eventocalendario      | eventocalendario_ibfk_2           | FOREIGN KEY |
+| nota                  | nota_ibfk_1                       | FOREIGN KEY |
+| nota                  | nota_ibfk_2                       | FOREIGN KEY |
+| nota                  | uq_nota_estudiante_curso_bimestre | UNIQUE      |
+| pauta                 | pauta_ibfk_1                      | FOREIGN KEY |
+| pauta                 | pauta_ibfk_2                      | FOREIGN KEY |
+| prediccion            | prediccion_ibfk_1                 | FOREIGN KEY |
+| tarea                 | tarea_ibfk_1                      | FOREIGN KEY |
+| tarea                 | tarea_ibfk_2                      | FOREIGN KEY |
+| user                  | ix_user_email                     | UNIQUE      |
++-----------------------+-----------------------------------+-------------+
++------------+-----------------------------------+---------------------------------+
+| tabla      | restriccion                       | columnas                        |
++------------+-----------------------------------+---------------------------------+
+| asistencia | uq_asistencia_estudiante_fecha    | estudiante_id,fecha             |
+| conducta   | uq_conducta_estudiante_bimestre   | estudiante_id,bimestre          |
+| estudiante | ix_estudiante_codigo              | codigo                          |
+| nota       | uq_nota_estudiante_curso_bimestre | estudiante_id,curso_id,bimestre |
+| user       | ix_user_email                     | email                           |
++------------+-----------------------------------+---------------------------------+
++-------------------------------------+
+| seccion                             |
++-------------------------------------+
+| == 4. Persistencia del E2E integral |
++-------------------------------------+
++----------------------+--------------+----------+----------+
+| modelo_version       | predicciones | prob_min | prob_max |
++----------------------+--------------+----------+----------+
+| rf-20261126-9ad6a250 |           31 |   0.0152 |   0.9607 |
++----------------------+--------------+----------+----------+
++----------+-------------+
+| riesgo   | estudiantes |
++----------+-------------+
+| verde    |          22 |
+| amarillo |           4 |
+| rojo     |           5 |
++----------+-------------+
++---------+--------+
+| alertas | leidas |
++---------+--------+
+|       5 |      1 |
++---------+--------+
++-------------------+-------+
+| accion            | veces |
++-------------------+-------+
+| crear_estudiante  |     1 |
+| editar_estudiante |     1 |
+| ver_ficha         |     6 |
++-------------------+-------+
++----------------------------------------------------------------------+
+| seccion                                                              |
++----------------------------------------------------------------------+
+| == 5. Contrasenas (solo prefijo y longitud del hash, nunca el valor) |
++----------------------------------------------------------------------+
++----------+----------------+----------+
+| rol      | prefijo_bcrypt | longitud |
++----------+----------------+----------+
+| director | $2b$           |       60 |
+| analista | $2b$           |       60 |
+| tutor    | $2b$           |       60 |
+| tutor    | $2b$           |       60 |
+| tutor    | $2b$           |       60 |
+| docente  | $2b$           |       60 |
+| docente  | $2b$           |       60 |
+| padre    | $2b$           |       60 |
+| padre    | $2b$           |       60 |
++----------+----------------+----------+
++---------------+
+| seccion       |
++---------------+
+| == 6. Cifrado |
++---------------+
++--------------------------+-----------------+
+| Variable_name            | Value           |
++--------------------------+-----------------+
+| binlog_encryption        | OFF             |
+| default_table_encryption | OFF             |
+| innodb_redo_log_encrypt  | OFF             |
+| innodb_undo_log_encrypt  | OFF             |
+| require_secure_transport | OFF             |
+| tls_version              | TLSv1.2,TLSv1.3 |
++--------------------------+-----------------+
++---------------+------------------------+
+| Variable_name | Value                  |
++---------------+------------------------+
+| Ssl_cipher    | TLS_AES_128_GCM_SHA256 |
++---------------+------------------------+
++------------+----------+
+| tabla      | opciones |
++------------+----------+
+| estudiante |          |
+| nota       |          |
+| user       |          |
++------------+----------+

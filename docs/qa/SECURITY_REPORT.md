@@ -41,6 +41,12 @@ Se fijaron versiones exactas (axios 1.21.1, react-router-dom 6.30.6, vite 6.4.6,
 | ORM con parámetros (sin SQL concatenado) | revisión de código |
 | Familia no ve probabilidades numéricas | FE `seguimiento.test.tsx` |
 
+## 3b. Base de datos (MySQL 8.4 local)
+- **En tránsito:** el backend se conectaba sin TLS (D‑13). Corregido con `DATABASE_SSL_CA`; las conexiones del *pool* quedan en TLSv1.3 (`TLS_AES_256_GCM_SHA384`).
+- **En reposo:** desactivado en el contenedor local; en RDS depende de crear la instancia con cifrado KMS (sin evidencia, O‑08).
+- Contraseñas con bcrypt (`$2b$`, 60 caracteres) verificadas directamente en la tabla `user`.
+- Detalle en `DATABASE_REPORT.md`.
+
 ## 4. Riesgos abiertos
 | ID | Riesgo | Impacto | Recomendación |
 |---|---|---|---|

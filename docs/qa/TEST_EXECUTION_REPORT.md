@@ -6,7 +6,9 @@
 
 | Suite | Herramienta | Pruebas | Resultado |
 |---|---|---|---|
-| Backend (API, RBAC, ingesta, migración) | pytest | 67 | ✅ 67 pasan |
+| Backend (API, RBAC, ingesta, migración) sobre SQLite | pytest | 71 | ✅ 70 pasan · 1 omitida (requiere MySQL real) |
+| Backend sobre **MySQL 8.4** (misma suite + TLS real) | pytest | 71 | ✅ 71 pasan |
+| E2E integral con backend sobre **MySQL + TLS** | Playwright | 8 escenarios | ✅ 8 pasan |
 | ML (pipeline y `/predict`) | pytest | 15 | ✅ 15 pasan |
 | Frontend unitarias y de componentes | Vitest + MSW | 214 | ✅ 214 pasan |
 | Frontend E2E con backend simulado (3 viewports) | Playwright | 74 | ✅ 74 pasan |
@@ -24,6 +26,7 @@
 | `tests/test_flujo_riesgo.py` | 5 |
 | `tests/test_ejemplos_carga.py` (archivos de `docs/ejemplos-carga`) | 1 |
 | `tests/test_migraciones.py` (upgrade = modelos, downgrade) | 1 |
+| `tests/test_db.py` (argumentos de conexión y TLS contra MySQL real) | 4 (1 solo con MySQL) |
 
 ## E2E integral (stack real, sin mocks)
 

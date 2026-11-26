@@ -16,6 +16,7 @@ Severidad: **Alta** (incumple un criterio de aceptación o un RNF), **Media** (c
 | D‑09 | RNF‑01 | Alta | `POST /predicciones/aula` con p95 de 2,9 s | Oclusión en lote (ML `9fe94cd`) → p95 1,1 s | `PERFORMANCE_REPORT.md` |
 | D‑10 | Seguridad | Alta | 60 vulnerabilidades conocidas en dependencias Python; 15 en npm | Actualización y fijado de versiones | `SECURITY_REPORT.md` |
 | D‑11 | HU03 | Media | Sin límite de tamaño de archivo | Máximo 5 MB → 413 (BE `eabacc1`) | `test_archivo_demasiado_grande` |
+| D‑13 | Seguridad | Alta | El backend se conectaba a MySQL sin TLS aunque el servidor lo soporta | `DATABASE_SSL_CA` / `DATABASE_SSL_VERIFY_HOSTNAME` en `app/db.py`; conexiones verificadas en TLSv1.3 | `tests/test_db.py`, `DATABASE_REPORT.md` §5 |
 | D‑12 | HU03 | Media | El mock del frontend aceptaba `.xls` y devolvía siempre «118 registros» | Contrato del mock alineado al backend | FE `gestion.test.tsx`, `datos.test.ts` |
 
 ## Abiertos
@@ -27,4 +28,5 @@ Severidad: **Alta** (incumple un criterio de aceptación o un RNF), **Media** (c
 | O‑04 | Seguridad | Media | Token en `localStorage` | Migrar a cookie `HttpOnly` |
 | O‑05 | Despliegue | Alta | No hay evidencia de AWS EC2/RDS configurado | Requiere acceso a la cuenta; no se declara como hecho |
 | O‑06 | HU03 | Baja | El TB4 asigna la carga masiva al **Analista**; por decisión del equipo solo el **Docente** carga notas | Actualizar el informe TB4 o revertir la regla |
+| O‑08 | Seguridad | Media | Sin cifrado en reposo en la verificación local; `require_secure_transport` desactivado | Activar *storage encryption* (KMS) y `require_secure_transport = 1` en RDS |
 | O‑07 | HU04 | Media | Modelo entrenado solo con datos sintéticos | Validar con datos reales anonimizados y con consentimiento |

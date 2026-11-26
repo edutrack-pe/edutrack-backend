@@ -14,7 +14,7 @@ flowchart LR
 
 📄 [Arquitectura](docs/arquitectura.md) · [Modelo de datos](docs/modelo-datos.md) · [API](docs/api.md) · [ADR-001](docs/adr/ADR-001-multirepo.md)
 
-🧪 MVP TB4: [Auditoría final](docs/qa/AUDIT_FINAL.md) · [Matriz de trazabilidad](docs/qa/TRACEABILITY_MATRIX.md) · [Plan](docs/qa/TEST_PLAN.md) y [casos de prueba](docs/qa/TEST_CASES.md) · [Ejecución](docs/qa/TEST_EXECUTION_REPORT.md) · [Defectos](docs/qa/DEFECT_REPORT.md) · [Rendimiento](docs/qa/PERFORMANCE_REPORT.md) · [Seguridad](docs/qa/SECURITY_REPORT.md) · [Cobertura](docs/qa/COVERAGE_REPORT.md) · [Despliegue](docs/architecture/DEPLOYMENT.md) · [Guion de demo](docs/demo/DEMO_SCRIPT.md)
+🧪 MVP TB4: [Auditoría final](docs/qa/AUDIT_FINAL.md) · [Matriz de trazabilidad](docs/qa/TRACEABILITY_MATRIX.md) · [Plan](docs/qa/TEST_PLAN.md) y [casos de prueba](docs/qa/TEST_CASES.md) · [Ejecución](docs/qa/TEST_EXECUTION_REPORT.md) · [Defectos](docs/qa/DEFECT_REPORT.md) · [Rendimiento](docs/qa/PERFORMANCE_REPORT.md) · [Seguridad](docs/qa/SECURITY_REPORT.md) · [Cobertura](docs/qa/COVERAGE_REPORT.md) · [Base de datos](docs/qa/DATABASE_REPORT.md) · [Despliegue](docs/architecture/DEPLOYMENT.md) · [Guion de demo](docs/demo/DEMO_SCRIPT.md)
 
 ## Inicio rápido (sin Docker, con SQLite)
 
