@@ -114,6 +114,13 @@ def test_columnas_faltantes_y_archivo_vacio(client, docente1):
     assert subir(client, docente1, CABECERA_NOTAS.encode()).status_code == 400
 
 
+def test_archivo_demasiado_grande(client, docente1):
+    grande = CABECERA_NOTAS.encode() + b"A0001,Matem\xc3\xa1tica,2,13\n" * 260_000  # > 5 MB
+    r = subir(client, docente1, grande)
+    assert r.status_code == 413
+    assert r.json()["detail"] == "El archivo supera el tamaño máximo de 5 MB"
+
+
 def test_asistencias(client, docente1):
     ayer = date.today() - timedelta(days=1)
     asis = f"codigo_estudiante,fecha,presente\nA0001,{ayer},0\nA0002,{ayer},sí\n"

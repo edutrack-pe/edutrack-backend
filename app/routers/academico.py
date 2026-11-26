@@ -11,7 +11,7 @@ from app.schemas import (
     AsistenciaIn, AsistenciaOut, ConductaIn, ConductaOut, EncuestaIn, IngestaOut, NotaIn, NotaOut, NotaUpdate,
 )
 from app.services.acceso import obtener_estudiante
-from app.services.ingesta import PLANTILLAS, importar, leer_archivo
+from app.services.ingesta import MAX_BYTES, PLANTILLAS, importar, leer_archivo
 
 router = APIRouter(tags=["académico"])
 
@@ -133,7 +133,10 @@ async def ingesta(
     user: User = Depends(require_role(*PUEDEN_REGISTRAR_NOTAS)),
     session: Session = Depends(get_session),
 ):
-    df = leer_archivo(archivo.filename or "", await archivo.read())
+    contenido = await archivo.read(MAX_BYTES + 1)  # no se lee más allá del límite
+    if len(contenido) > MAX_BYTES:
+        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "El archivo supera el tamaño máximo de 5 MB")
+    df = leer_archivo(archivo.filename or "", contenido)
     return importar(session, tipo, df, docente_id=user.id)
 
 

@@ -20,6 +20,7 @@ PLANTILLAS = {
 EXTENSIONES = (".csv", ".xlsx")
 FORMATO_NO_PERMITIDO = "Formato no permitido, adjunte un archivo CSV o XLSX"
 MAX_FILAS = 5000
+MAX_BYTES = 5 * 1024 * 1024  # 5 MB: una carga de 5000 filas ocupa ~150 KB; el límite evita agotar memoria
 SI = {"1", "si", "sí", "true", "p", "presente"}
 NO = {"0", "no", "false", "f", "falta", "ausente"}
 
