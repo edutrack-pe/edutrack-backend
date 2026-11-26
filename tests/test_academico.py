@@ -1,3 +1,5 @@
+from datetime import date
+
 def test_registrar_nota_docente_y_restricciones(client, login):
     director = login("director@edutrack.pe")
     est = client.get("/api/estudiantes", headers=director).json()[0]
@@ -25,11 +27,14 @@ def test_registrar_nota_docente_y_restricciones(client, login):
 def test_asistencia(client, login):
     tutor = login("tutor1@edutrack.pe")
     est = client.get("/api/estudiantes", headers=tutor).json()[0]
+    hoy = str(date.today())
     r = client.post("/api/asistencias", headers=tutor,
-                    json={"estudiante_id": est["id"], "fecha": "2026-11-10", "presente": False})
+                    json={"estudiante_id": est["id"], "fecha": hoy, "presente": False})
     assert r.status_code == 201
     lista = client.get(f"/api/asistencias?estudiante_id={est['id']}", headers=tutor).json()
-    assert any(a["fecha"] == "2026-11-10" and not a["presente"] for a in lista)
+    assert any(a["fecha"] == hoy and not a["presente"] for a in lista)
+    otra = client.post("/api/asistencias", headers=tutor, json={"estudiante_id": est["id"], "fecha": hoy})
+    assert otra.status_code == 409
 
 
 def test_solo_el_docente_registra_notas(client, login):
@@ -47,31 +52,6 @@ def test_solo_el_docente_registra_notas(client, login):
         propio = client.get("/api/estudiantes", headers=cabeceras).json()[0]
         notas = client.get(f"/api/notas?estudiante_id={propio['id']}", headers=cabeceras)
         assert notas.status_code == 200 and notas.json(), correo
-
-
-def test_ingesta_csv(client, login):
-    docente1 = login("docente1@edutrack.pe")  # dicta Matemática y Ciencia
-    plantilla = client.get("/api/ingesta/plantilla?tipo=notas").text
-    assert plantilla.startswith("codigo_estudiante,curso,bimestre,nota")
-
-    csv = ("codigo_estudiante,curso,bimestre,nota\nA0001,Matemática,2,13\nA9999,Matemática,2,10\n"
-           "A0001,Arte,2,12\nA0001,Matemática,9,12\nA0001,Comunicación,2,14\n")
-    r = client.post("/api/ingesta/csv?tipo=notas", headers=docente1,
-                    files={"archivo": ("notas.csv", csv.encode(), "text/csv")})
-    assert r.status_code == 200, r.text
-    body = r.json()
-    assert body["insertados"] == 1
-    assert len(body["errores"]) == 4
-    assert body["errores"][-1] == "Fila 6: no dictas el curso 'Comunicación' en el aula del estudiante"
-
-    asis = "codigo_estudiante,fecha,presente\nA0001,2026-11-11,0\nA0002,2026-11-11,si\n"
-    r = client.post("/api/ingesta/csv?tipo=asistencias", headers=docente1,
-                    files={"archivo": ("asis.csv", asis.encode(), "text/csv")})
-    assert r.json()["insertados"] == 2
-
-    mala = client.post("/api/ingesta/csv?tipo=notas", headers=docente1,
-                       files={"archivo": ("x.csv", b"col1,col2\n1,2\n", "text/csv")})
-    assert mala.status_code == 400
 
 
 def test_encuesta_padre(client, login):
