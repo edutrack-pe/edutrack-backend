@@ -14,6 +14,8 @@ flowchart LR
 
 📄 [Arquitectura](docs/arquitectura.md) · [Modelo de datos](docs/modelo-datos.md) · [API](docs/api.md) · [ADR-001](docs/adr/ADR-001-multirepo.md)
 
+🧪 MVP TB4: [Auditoría final](docs/qa/AUDIT_FINAL.md) · [Matriz de trazabilidad](docs/qa/TRACEABILITY_MATRIX.md) · [Plan](docs/qa/TEST_PLAN.md) y [casos de prueba](docs/qa/TEST_CASES.md) · [Ejecución](docs/qa/TEST_EXECUTION_REPORT.md) · [Defectos](docs/qa/DEFECT_REPORT.md) · [Rendimiento](docs/qa/PERFORMANCE_REPORT.md) · [Seguridad](docs/qa/SECURITY_REPORT.md) · [Cobertura](docs/qa/COVERAGE_REPORT.md) · [Despliegue](docs/architecture/DEPLOYMENT.md) · [Guion de demo](docs/demo/DEMO_SCRIPT.md)
+
 ## Inicio rápido (sin Docker, con SQLite)
 
 Necesitas tener `edutrack-ml` corriendo en el puerto 8001 para las predicciones.
@@ -63,13 +65,16 @@ Todos usan la contraseña definida en `SEED_DEFAULT_PASSWORD`.
 | Email | Rol | Ve |
 |---|---|---|
 | director@edutrack.pe | director | todo el colegio |
-| analista@edutrack.pe | analista | todo; carga CSV, predicción, umbrales |
+| analista@edutrack.pe | analista | todo; registro de estudiantes, predicción, umbrales |
 | tutor1@edutrack.pe | tutor | aula 3° A |
 | tutor2@edutrack.pe | tutor | aula 3° B |
 | tutor3@edutrack.pe | tutor | aula 4° A |
 | docente1@edutrack.pe | docente | Matemática y Ciencia en todas las aulas |
 | docente2@edutrack.pe | docente | Comunicación e Inglés en todas las aulas |
-| padre@edutrack.pe | padre | solo su hijo (estudiante A0001) |
+| padre@edutrack.pe | padre | solo su hijo (primer estudiante de 3° A) |
+| padre2@edutrack.pe | padre | solo su hija (primera estudiante de 4° A) |
+
+Solo los docentes cargan y corrigen notas de sus cursos. Detalle de permisos en [docs/demo/DEMO_ACCOUNTS.md](docs/demo/DEMO_ACCOUNTS.md).
 
 > Son datos **sintéticos**. Nunca cargues datos reales de menores en entornos de desarrollo (Ley N° 29733).
 
@@ -79,7 +84,21 @@ Todos usan la contraseña definida en `SEED_DEFAULT_PASSWORD`.
 pytest --cov=app --cov-report=term-missing
 ```
 
-El CI falla si la cobertura baja de **70 %** (IND-05).
+El CI falla si la cobertura baja de **70 %** (IND-05). Estado actual: 67 pruebas, 95 % de cobertura.
+
+`tests/test_migraciones.py` aplica `alembic upgrade head` sobre una base vacía, compara el esquema con los modelos y prueba el `downgrade`. Para una base existente:
+
+```bash
+alembic upgrade head
+```
+
+**Rendimiento (Locust).** Con el backend, el ML y el seed levantados:
+
+```bash
+EDUTRACK_PASSWORD=<clave del seed> locust -f tests/performance/locustfile.py --headless -u 30 -r 5 -t 3m --host http://localhost:8000
+```
+
+Resultados en [docs/qa/PERFORMANCE_REPORT.md](docs/qa/PERFORMANCE_REPORT.md). Los archivos de ejemplo para la carga masiva están en [docs/ejemplos-carga/](docs/ejemplos-carga).
 
 ## Estructura
 
@@ -104,6 +123,8 @@ docs/
 ```
 
 ## Despliegue en AWS
+
+> Procedimiento previsto por el TB4. A la fecha no hay evidencia de que EC2/RDS estén configurados; ver [docs/architecture/DEPLOYMENT.md](docs/architecture/DEPLOYMENT.md).
 
 1. Crea la RDS MySQL (db.t3.micro) en subred privada; su *security group* debe aceptar el puerto 3306 **solo** desde la EC2.
 2. Crea la EC2 (t3.medium, Ubuntu 24.04) y ejecuta `infra/scripts/setup-ec2.sh`.
