@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./edutrack.db"
     jwt_secret: str = "cambia-esto-en-produccion"
     jwt_algorithm: str = "HS256"
-    jwt_expires_minutes: int = 120
+    jwt_expires_minutes: int = 480  # 8 horas de sesión (TB4, HU01)
     ml_service_url: str = "http://localhost:8001"
     cors_origins: str = "http://localhost:5173"
     seed_default_password: str = ""
