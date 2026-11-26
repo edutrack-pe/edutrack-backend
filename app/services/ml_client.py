@@ -19,3 +19,16 @@ def predecir_lote(solicitudes: list[dict]) -> list[dict]:
             status.HTTP_502_BAD_GATEWAY, f"El servicio de ML no respondió correctamente: {e}"
         ) from e
     return r.json()
+
+
+def info_modelo() -> dict:
+    """GET /modelo → versión, variables, umbral y evaluación del modelo publicado."""
+    url = f"{get_settings().ml_service_url.rstrip('/')}/modelo"
+    try:
+        r = httpx.get(url, timeout=10)
+        r.raise_for_status()
+    except httpx.HTTPError as e:
+        raise HTTPException(
+            status.HTTP_502_BAD_GATEWAY, f"El servicio de ML no respondió correctamente: {e}"
+        ) from e
+    return r.json()

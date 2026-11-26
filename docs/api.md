@@ -28,6 +28,7 @@ Todas las rutas usan el prefijo `/api` y requieren `Authorization: Bearer <token
 | PATCH | `/alertas/{id}/leer` | tutor, director | RF-06 |
 | GET/POST | `/actas` | tutor (POST), director | RF-08 |
 | GET | `/reportes/aula/{id}/pdf` | director, tutor | RF-09 |
+| GET | `/modelo` (versión, métricas de prueba, matriz de confusión, importancia de variables; 502 si ml-service no responde) | director, analista | RNF-02 |
 | GET | `/config/riesgo` | analista, director | RF-10 |
 | PUT | `/config/riesgo` | analista | RF-10 |
 | GET | `/calendario?aula_id=&proximos=true` | todos (filtrado por rol) | Calendario (aviso 8 días) |
