@@ -10,9 +10,11 @@ from app.core.security import get_current_user, require_role
 from app.db import get_session
 from app.models import Alerta, Asistencia, Aula, Colegio, Estudiante, Nota, Prediccion, Rol, User
 from app.schemas import (
-    AlertaOut, ConfigRiesgoIO, DashboardOut, PrediccionOut, ResultadoPrediccionAula, ResumenAula,
+    AlertaOut, ConfigRiesgoIO, DashboardOut, ModeloOut, PrediccionOut, ResultadoPrediccionAula, ResumenAula,
 )
+from app.services import ml_client
 from app.services.acceso import aulas_visibles, auditar, obtener_estudiante, verificar_aula
+from app.services.modelo import a_modelo_out
 from app.services.prediccion import (
     obtener_config, predecir_aula, predecir_estudiante, ultima_prediccion, ultimas_predicciones,
 )
@@ -178,6 +180,14 @@ def reporte_pdf(
     archivo = re.sub(r"[^A-Za-z0-9]+", "-", aula.nombre).strip("-").lower() or str(aula.id)
     return Response(pdf, media_type="application/pdf",
                     headers={"Content-Disposition": f'attachment; filename="reporte-aula-{archivo}.pdf"'})
+
+
+@router.get(
+    "/modelo", response_model=ModeloOut,
+    summary="Ficha del modelo publicado: versión, métricas de prueba, matriz de confusión e importancia de variables",
+)
+def ficha_modelo(_: User = Depends(require_role(Rol.director, Rol.analista))):
+    return a_modelo_out(ml_client.info_modelo())
 
 
 @router.get("/config/riesgo", response_model=ConfigRiesgoIO)

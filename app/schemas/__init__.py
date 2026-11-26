@@ -243,3 +243,70 @@ class IngestaOut(BaseModel):
     filas: int = 0
     insertados: int
     errores: list[str]
+
+
+# --- Modelo predictivo publicado (lectura para director y analista) ---
+
+class MatrizConfusion(BaseModel):
+    vn: int
+    fp: int
+    fn: int
+    vp: int
+
+
+class MetricasConUmbral(BaseModel):
+    umbral: float
+    precision: float
+    recall: float
+    f1: float
+    matriz_confusion: MatrizConfusion
+
+
+class MetricasPrueba(MetricasConUmbral):
+    auc_roc: float
+
+
+class DatosEntrenamiento(BaseModel):
+    origen: str
+    filas: int
+    entrenamiento: int
+    prueba: int
+    proporcion_en_riesgo: float
+
+
+class ValidacionCruzada(BaseModel):
+    folds: int
+    f1_media: float
+    f1_desviacion: float
+    auc_media: float
+
+
+class ImportanciaVariable(BaseModel):
+    variable: str
+    importancia: float
+
+
+class MetasCalidad(BaseModel):
+    f1_minimo: float
+    auc_minimo_exclusivo: float
+
+
+class EvaluacionModelo(BaseModel):
+    datos: DatosEntrenamiento
+    validacion_cruzada: ValidacionCruzada
+    prueba: MetricasPrueba
+    sensibilidad_umbral: list[MetricasConUmbral]
+    importancia_variables: list[ImportanciaVariable]
+    variables_descartadas_vif: list[str]
+    vif_maximo: float | None
+    mejores_hiperparametros: dict[str, int | float | str | None]
+    metas: MetasCalidad
+    cumple_rnf02: bool
+
+
+class ModeloOut(BaseModel):
+    version: str
+    fecha_entrenamiento: datetime | None = None
+    variables: list[str]
+    umbral_decision: float | None = None
+    evaluacion: EvaluacionModelo | None = None
