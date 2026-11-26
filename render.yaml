@@ -1,0 +1,33 @@
+# Blueprint de Render (plan gratuito) para la API de EduTrack.
+# Render > New > Blueprint > repositorio edutrack-backend > rama "deploy".
+services:
+  - type: web
+    name: edutrack-api
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: deploy
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    dockerCommand: sh scripts/arranque_render.sh
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8000"
+      # MySQL gratis externo. Déjalo vacío para usar SQLite temporal (se borra en cada reinicio).
+      #   Aiven:      mysql+pymysql://USUARIO:CLAVE@HOST:PUERTO/defaultdb?ssl_check_hostname=false
+      #   TiDB Cloud: mysql+pymysql://USUARIO:CLAVE@HOST:4000/edutrack?ssl_ca=/etc/ssl/certs/ca-certificates.crt
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_MINUTES
+        value: "120"
+      # URL pública del servicio de ML en Render, por ejemplo https://edutrack-ml.onrender.com
+      - key: ML_SERVICE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://edutrack-frontend-theta.vercel.app,http://localhost:5173
+      # Contraseña de los usuarios demo (mínimo 8 caracteres).
+      - key: SEED_DEFAULT_PASSWORD
+        sync: false
