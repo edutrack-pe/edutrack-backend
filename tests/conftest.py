@@ -19,7 +19,8 @@ def ml_falso(solicitudes: list[dict]) -> list[dict]:
         p = max(0.0, min(1.0, (16 - s["features"]["promedio"]) / 8))
         riesgo = "rojo" if p >= s["umbral_rojo"] else "amarillo" if p >= s["umbral_amarillo"] else "verde"
         salida.append({"student_id": s["student_id"], "riesgo": riesgo, "probabilidad": round(p, 3),
-                       "factores": ["promedio", "inasistencias", "tareas_entregadas_pct"]})
+                       "factores": ["promedio", "inasistencias", "tareas_entregadas_pct"] if riesgo != "verde" else [],
+                       "modelo_version": "rf-prueba"})
     return salida
 
 
