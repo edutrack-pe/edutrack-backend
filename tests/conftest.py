@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
@@ -24,9 +26,19 @@ def ml_falso(solicitudes: list[dict]) -> list[dict]:
     return salida
 
 
+def _motor_de_prueba():
+    """SQLite en memoria por defecto; TEST_DATABASE_URL permite correr la misma suite sobre MySQL."""
+    url = os.getenv("TEST_DATABASE_URL")
+    if not url:
+        return create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    engine = create_engine(url, pool_pre_ping=True)
+    SQLModel.metadata.drop_all(engine)
+    return engine
+
+
 @pytest.fixture()
 def client(monkeypatch):
-    engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    engine = _motor_de_prueba()
     SQLModel.metadata.create_all(engine)
     with Session(engine) as s:
         poblar(s, PASSWORD, alumnos_por_aula=6)
@@ -41,6 +53,7 @@ def client(monkeypatch):
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+    engine.dispose()
 
 
 @pytest.fixture()

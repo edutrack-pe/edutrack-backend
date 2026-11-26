@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     # mysql+pymysql://usuario:clave@host:3306/edutrack  (en AWS: endpoint de RDS)
     # Por defecto SQLite para correr rápido en local sin MySQL.
     database_url: str = "sqlite:///./edutrack.db"
+    # TLS hacia MySQL: ruta del certificado de la CA (en RDS: global-bundle.pem). Vacío = sin TLS.
+    database_ssl_ca: str = ""
+    database_ssl_verify_hostname: bool = True
     jwt_secret: str = "cambia-esto-en-produccion"
     jwt_algorithm: str = "HS256"
     jwt_expires_minutes: int = 480  # 8 horas de sesión (TB4, HU01)

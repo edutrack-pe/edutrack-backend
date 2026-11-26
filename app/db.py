@@ -5,14 +5,23 @@ from collections.abc import Generator
 from sqlalchemy.exc import OperationalError
 from sqlmodel import Session, SQLModel, create_engine
 
-from app.core.config import get_settings
+from app.core.config import Settings, get_settings
 
 logger = logging.getLogger("edutrack.db")
 
 settings = get_settings()
 
-_connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
-engine = create_engine(settings.database_url, pool_pre_ping=True, connect_args=_connect_args)
+
+def argumentos_conexion(cfg: Settings) -> dict:
+    """SQLite: uso desde varios hilos. MySQL: TLS verificado contra la CA si se configura DATABASE_SSL_CA."""
+    if cfg.database_url.startswith("sqlite"):
+        return {"check_same_thread": False}
+    if cfg.database_ssl_ca:
+        return {"ssl": {"ca": cfg.database_ssl_ca, "check_hostname": cfg.database_ssl_verify_hostname}}
+    return {}
+
+
+engine = create_engine(settings.database_url, pool_pre_ping=True, connect_args=argumentos_conexion(settings))
 
 
 def init_db(intentos: int = 30, espera: float = 2.0) -> None:
