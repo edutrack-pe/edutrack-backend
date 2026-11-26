@@ -3,7 +3,7 @@
 from datetime import date, datetime, timezone
 from enum import Enum
 
-from sqlalchemy import JSON, Column
+from sqlalchemy import JSON, Column, UniqueConstraint
 from sqlmodel import Field, SQLModel
 
 
@@ -44,7 +44,8 @@ class Colegio(SQLModel, table=True):
 class Aula(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nombre: str = Field(max_length=50)  # p. ej. "3° A"
-    grado: int
+    grado: int = Field(ge=1, le=5, index=True)  # 1.° a 5.° de secundaria
+    seccion: str = Field(default="A", max_length=5)
     colegio_id: int = Field(foreign_key="colegio.id")
     tutor_id: int | None = Field(default=None, foreign_key="user.id")
 
@@ -68,14 +69,18 @@ class Curso(SQLModel, table=True):
 # ---------- Datos académicos ----------
 
 class Nota(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint("estudiante_id", "curso_id", "bimestre", name="uq_nota_estudiante_curso_bimestre"),)
+
     id: int | None = Field(default=None, primary_key=True)
     estudiante_id: int = Field(foreign_key="estudiante.id", index=True)
-    curso_id: int = Field(foreign_key="curso.id")
+    curso_id: int = Field(foreign_key="curso.id", index=True)
     bimestre: int = Field(ge=1, le=4)
     valor: float = Field(ge=0, le=20)
 
 
 class Asistencia(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint("estudiante_id", "fecha", name="uq_asistencia_estudiante_fecha"),)
+
     id: int | None = Field(default=None, primary_key=True)
     estudiante_id: int = Field(foreign_key="estudiante.id", index=True)
     fecha: date
@@ -83,6 +88,8 @@ class Asistencia(SQLModel, table=True):
 
 
 class Conducta(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint("estudiante_id", "bimestre", name="uq_conducta_estudiante_bimestre"),)
+
     id: int | None = Field(default=None, primary_key=True)
     estudiante_id: int = Field(foreign_key="estudiante.id", index=True)
     bimestre: int = Field(ge=1, le=4)
@@ -121,7 +128,8 @@ class Prediccion(SQLModel, table=True):
     riesgo: Riesgo
     probabilidad: float
     factores: list[str] = Field(default_factory=list, sa_column=Column(JSON))
-    fecha: datetime = Field(default_factory=ahora)
+    modelo_version: str | None = Field(default=None, max_length=40)
+    fecha: datetime = Field(default_factory=ahora, index=True)
 
 
 class Pauta(SQLModel, table=True):
@@ -134,8 +142,11 @@ class Pauta(SQLModel, table=True):
 
 class Alerta(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    estudiante_id: int = Field(foreign_key="estudiante.id")
+    estudiante_id: int = Field(foreign_key="estudiante.id", index=True)
+    prediccion_id: int | None = Field(default=None, foreign_key="prediccion.id")
     tutor_id: int | None = Field(default=None, foreign_key="user.id", index=True)
+    riesgo: Riesgo = Riesgo.rojo
+    probabilidad: float | None = None
     mensaje: str = Field(max_length=300)
     leida: bool = False
     fecha: datetime = Field(default_factory=ahora)
