@@ -27,7 +27,7 @@ Rutas relativas a cada repositorio (rama `feature/mvp-tb4`). **BE** = edutrack-b
 | HU04 | Sin notas del bimestre → «Datos insuficientes…» sin llamar al ML | BE `app/services/prediccion.py` | BE `test_datos_insuficientes_no_llama_al_ml` · E2E Esc. 4a | ✅ |
 | HU04 | Se guarda predicción con versión y fecha | BE `Prediccion.modelo_version` | BE `test_prediccion_individual_guarda_version_y_fecha` · E2E Esc. 4b | ✅ |
 | HU04 | La predicción depende de los datos reales | BE + ML | BE `test_la_prediccion_cambia_si_cambian_los_datos` · E2E Esc. 4b (RF real) | ✅ |
-| HU04 | RNF‑02: F1 ≥ 0,75 y AUC > 0,80 | ML `reports/metricas.json` | ML *quality gate* en CI | ❌ F1 0,740 · ✅ AUC 0,912 |
+| HU04 | RNF‑02: F1 ≥ 0,75 y AUC > 0,80 | ML `reports/metricas.json` | ML *quality gate* en CI | ✅ F1 0,755 · ✅ AUC 0,923 (CV F1 0,748 ± 0,019) |
 | HU05 | Totales, evaluados, niveles y porcentajes consistentes | BE `GET /dashboard/resumen` | BE `test_dashboard_consistente_y_filtros` · E2E Esc. 5 | ✅ |
 | HU05 | Filtros por grado, sección y riesgo | BE dashboard y `GET /estudiantes` · FE `FiltrosPanorama.tsx` | BE `test_dashboard_consistente_y_filtros` · FE `mvp.test.tsx` · E2E Esc. 5 | ✅ |
 | HU05 | «Sin información disponible para el filtro seleccionado» | FE `Dashboard.tsx` | FE `mvp.test.tsx` | ✅ |

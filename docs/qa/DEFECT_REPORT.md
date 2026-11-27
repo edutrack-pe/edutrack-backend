@@ -19,10 +19,14 @@ Severidad: **Alta** (incumple un criterio de aceptación o un RNF), **Media** (c
 | D‑13 | Seguridad | Alta | El backend se conectaba a MySQL sin TLS aunque el servidor lo soporta | `DATABASE_SSL_CA` / `DATABASE_SSL_VERIFY_HOSTNAME` en `app/db.py`; conexiones verificadas en TLSv1.3 | `tests/test_db.py`, `DATABASE_REPORT.md` §5 |
 | D‑12 | HU03 | Media | El mock del frontend aceptaba `.xls` y devolvía siempre «118 registros» | Contrato del mock alineado al backend | FE `gestion.test.tsx`, `datos.test.ts` |
 
+## Cerrados después de la auditoría
+| ID | Área | Descripción | Solución | Evidencia |
+|---|---|---|---|---|
+| O‑01 | HU04 / RNF‑02 | F1 en prueba = 0,740 (< 0,75) con 2 000 filas sintéticas; el modelo se había publicado con `--forzar` | Dataset sintético de 10 000 filas (tamaño fijado antes de reentrenar, una sola corrida, mismo generador, semilla y rejilla). Prueba: F1 **0,755**, AUC **0,923**; el *quality gate* aprueba sin `--forzar`. CV F1 0,748 ± 0,019: margen pequeño | `edutrack-ml/docs/ml/MODEL_EVALUATION.md`, `reports/metricas.json` |
+
 ## Abiertos
 | ID | Área | Severidad | Descripción | Motivo / plan |
 |---|---|---|---|---|
-| O‑01 | HU04 / RNF‑02 | Alta | F1 en test = **0,740** (< 0,75). AUC 0,912 cumple | No se alteró el conjunto de prueba. El modelo se publicó con `--forzar` solo para la demo académica. Plan: más variables (asistencia por bimestre, historial), datos reales anonimizados, calibrar umbral. Ver `edutrack-ml/docs/ml/MODEL_EVALUATION.md`. |
 | O‑02 | Seguridad | Media | Sin límite de intentos de login | Fuera del alcance de las HU; recomendado antes de producción |
 | O‑03 | Seguridad | Baja | 9 hallazgos npm residuales (2 críticos solo de desarrollo) | Requieren versiones mayores |
 | O‑04 | Seguridad | Media | Token en `localStorage` | Migrar a cookie `HttpOnly` |
