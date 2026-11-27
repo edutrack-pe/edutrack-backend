@@ -235,6 +235,8 @@ def test_alertas_con_detalle_sin_duplicados_y_por_tutor(client, login):
     assert len(alertas) == rojos
     a = alertas[0]
     assert a["riesgo"] == "rojo" and a["estudiante"] and a["aula"] == "3° A" and a["factores"]
+    apellidos, nombres = a["estudiante"].split(", ")  # la lista muestra «Apellidos, Nombres»
+    assert a["mensaje"].startswith(f"El estudiante {nombres} {apellidos} ha ingresado a nivel de Riesgo Alto.")
     detalle = client.get(f"/api/alertas/{a['id']}", headers=tutor1).json()
     assert detalle["prediccion_id"] == a["prediccion_id"]
 
