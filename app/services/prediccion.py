@@ -26,8 +26,9 @@ def _registrar_alerta(session: Session, est: Estudiante, aula: Aula, pred: Predi
     """Crea la alerta de riesgo alto. Si el estudiante ya tiene una alerta sin leer, la actualiza
     en lugar de duplicarla. Devuelve True si se creó una alerta nueva."""
     factores = ", ".join(FACTOR_LEGIBLE.get(f, f) for f in pred.factores) or "sin factor dominante"
-    mensaje = (f"{est.nombres} {est.apellidos} ({aula.nombre}) está en riesgo alto "
-               f"({pred.probabilidad:.0%}). Factores: {factores}.")[:300]
+    # HU06: la frase inicial es la del criterio de aceptación; el detalle va después.
+    mensaje = (f"El estudiante {est.nombres} {est.apellidos} ha ingresado a nivel de Riesgo Alto. "
+               f"Aula {aula.nombre}, probabilidad {pred.probabilidad:.0%}. Factores: {factores}.")[:300]
     pendiente = session.exec(
         select(Alerta).where(Alerta.estudiante_id == est.id, Alerta.leida == False)  # noqa: E712
     ).first()
