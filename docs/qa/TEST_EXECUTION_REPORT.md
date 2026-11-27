@@ -14,7 +14,7 @@
 | Frontend E2E con backend simulado (3 viewports) | Playwright | 74 | ✅ 74 pasan |
 | **E2E integral contra el stack real** | Playwright | 8 escenarios | ✅ 8 pasan |
 | Rendimiento (30 usuarios, 3 min) | Locust | 2 587 peticiones | ✅ 0 fallos; p95 máx. 1,1 s |
-| Calidad del modelo (RNF‑02) | `pipeline.entrenar` | 1 | ❌ F1 0,740 < 0,75 (AUC 0,912 cumple) |
+| Calidad del modelo (RNF‑02) | `pipeline.entrenar` | 1 | ✅ F1 0,755 ≥ 0,75 · AUC 0,923 (`rf-20261127-7734085c`, 27/11/2026; antes F1 0,740 con 2 000 filas) |
 
 ## Backend por archivo
 | Archivo | Pruebas |
